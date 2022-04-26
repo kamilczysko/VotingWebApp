@@ -27,7 +27,7 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserDetailServiceImplementation userService;
+    private UserDetailService userService;
 
     @GetMapping("/disallowed")
     public List<String> getDisallowedUsers() {

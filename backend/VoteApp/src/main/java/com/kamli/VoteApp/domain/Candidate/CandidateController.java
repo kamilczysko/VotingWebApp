@@ -20,9 +20,9 @@ public class CandidateController {
         return "hello";
     }
 
-    @PostMapping("/vote")
+    @PostMapping("/vote/{id}")
     @Secured("ALLOWED")
-    public ResponseEntity vote(@RequestBody Long id) {
+    public ResponseEntity vote(@PathVariable Long id) {
         Optional<Candidate> candidate = candidateService.voteOnCandidate(id);
         if (candidate.isPresent()){
             return new ResponseEntity<>(HttpStatus.OK);

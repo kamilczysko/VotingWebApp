@@ -2,10 +2,14 @@ package com.kamli.VoteApp.domain.candidate;
 
 import com.kamli.VoteApp.domain.party.Party;
 import com.kamli.VoteApp.domain.party.PartyRepository;
+import com.kamli.VoteApp.domain.user.UserDetailService;
+import com.kamli.VoteApp.domain.user.entity.AppUser;
 import com.kamli.VoteApp.dto.CandidateDTO;
 import com.kamli.VoteApp.dto.CandidatesDTO;
 import com.kamli.VoteApp.dto.PartyDTO;
+import com.kamli.VoteApp.infrastructue.ActualUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,6 +28,9 @@ public class CandidateService {
 
     @Autowired
     private CandidateRepository candidateRepository;
+
+    @Autowired
+    private UserDetailService userDetailService;
 
     public List<CandidateDTO> getAllCandidates() {
         return candidateRepository.findAll().stream()
@@ -55,13 +62,26 @@ public class CandidateService {
 
     public Optional<Candidate> voteOnCandidate(Long id) {
         Optional<Candidate> candidate = candidateRepository.findById(id);
-        return candidate.map(c -> Candidate.builder()
-                        .id(c.getId())
-                        .name(c.getName())
-                        .party(c.getParty())
-                        .numberOfVotes(c.getNumberOfVotes() + 1)
-                        .build())
-                .map(candidateToUpdate -> candidateRepository.save(candidateToUpdate));
+        ActualUser userAuth = (ActualUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AppUser user = userDetailService.getUser(userAuth.getId());
+        if(user.isBanned()){
+            throw new IllegalStateException("User was banned");
+        }
+        if(user.isHasVoted()){
+            throw new IllegalStateException("User has voted already");
+        }
+        Optional<Candidate> candidateToUpdate = candidate.map(c -> Candidate.builder()
+                .id(c.getId())
+                .name(c.getName())
+                .party(c.getParty())
+                .numberOfVotes(c.getNumberOfVotes() + 1)
+                .build());
+        if(candidateToUpdate.isPresent()) {
+            candidateToUpdate.ifPresent(c -> candidateRepository.save(c));
+            userDetailService.userHasVoted(userAuth.getId());
+            return candidateToUpdate;
+        }
+        return Optional.empty();
     }
 
     private List<Candidate> saveCandidates(CandidatesDTO candidates, Map<String, Party> nameToParty) {

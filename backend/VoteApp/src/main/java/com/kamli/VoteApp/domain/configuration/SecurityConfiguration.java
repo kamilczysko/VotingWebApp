@@ -1,6 +1,6 @@
 package com.kamli.VoteApp.domain.configuration;
 
-import com.kamli.VoteApp.domain.user.UserDetailServiceImplementation;
+import com.kamli.VoteApp.domain.user.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserDetailServiceImplementation userDetailsService;
+    private UserDetailService userDetailsService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -33,8 +33,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .csrf().ignoringAntMatchers("/register")
-                .ignoringAntMatchers("/get-all-candidates");
+                .csrf().disable();
     }
 
     @Bean

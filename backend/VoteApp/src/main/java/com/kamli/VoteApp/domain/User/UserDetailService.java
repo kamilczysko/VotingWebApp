@@ -3,12 +3,13 @@ package com.kamli.VoteApp.domain.user;
 import com.kamli.VoteApp.domain.configuration.UsersConfiguration;
 import com.kamli.VoteApp.domain.user.entity.AppUser;
 import com.kamli.VoteApp.domain.user.entity.Role;
+import com.kamli.VoteApp.infrastructue.ActualUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,7 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class UserDetailServiceImplementation implements UserDetailsService {
+public class UserDetailService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -34,7 +35,14 @@ public class UserDetailServiceImplementation implements UserDetailsService {
         }
         Set<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>();
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + appUser.getRole().name()));
-        return new User(appUser.getIdentityNumber(), appUser.getPasswordHash(), true, true, true, true, grantedAuthorities);
+        return ActualUser.userBuilder()
+                .setUsername(appUser.getIdentityNumber())
+                .setPassword(appUser.getPasswordHash())
+                .setId(appUser.getId())
+                .setAuthorities(grantedAuthorities)
+                .setVoted(appUser.isHasVoted())
+                .setIsBanned(appUser.isBanned())
+                .build();
     }
 
     public void registerNewUser(AppUser newUser) {
@@ -53,5 +61,29 @@ public class UserDetailServiceImplementation implements UserDetailsService {
                 .banned(true)
                 .role(Role.DISALLOWED)
                 .build();
+    }
+
+    private AppUser mapVotedUser(AppUser user) {
+        return AppUser.builder()
+                .id(user.getId())
+                .identityNumber(user.getIdentityNumber())
+                .passwordHash(user.getPasswordHash())
+                .hasVoted(true)
+                .role(user.getRole())
+                .build();
+    }
+
+    public AppUser getUser(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new IllegalStateException("User should be present"));
+    }
+
+    public AppUser userHasVoted(Long userId){
+        ActualUser user = (ActualUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AppUser userById = userRepository.findById(userId).orElseThrow();
+        if(!user.getId().equals(userById.getId())) {
+            throw  new IllegalStateException("Other user cannot perform this operation");
+        }
+        AppUser userToUpdate = mapVotedUser(userById);
+        return userRepository.save(userToUpdate);
     }
 }
