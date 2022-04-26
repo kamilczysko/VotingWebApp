@@ -1,4 +1,4 @@
-package com.kamli.VoteApp.domain.User;
+package com.kamli.VoteApp.domain.configuration.entity;
 
 import lombok.*;
 

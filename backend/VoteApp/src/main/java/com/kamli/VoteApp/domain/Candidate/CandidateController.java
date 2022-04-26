@@ -1,4 +1,4 @@
-package com.kamli.VoteApp.domain.Candidate;
+package com.kamli.VoteApp.domain.candidate;
 
 import com.kamli.VoteApp.dto.CandidateDTO;
 import org.springframework.beans.factory.annotation.Autowired;

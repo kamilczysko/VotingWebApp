@@ -1,4 +1,4 @@
-package com.kamli.VoteApp.domain.Party;
+package com.kamli.VoteApp.domain.party;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

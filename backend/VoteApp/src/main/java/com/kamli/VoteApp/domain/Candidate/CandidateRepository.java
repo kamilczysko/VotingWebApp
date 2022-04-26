@@ -1,4 +1,4 @@
-package com.kamli.VoteApp.domain.Candidate;
+package com.kamli.VoteApp.domain.candidate;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package com.kamli.VoteApp.domain.User;
+package com.kamli.VoteApp.domain.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,7 +1,7 @@
-package com.kamli.VoteApp.domain.Candidate;
+package com.kamli.VoteApp.domain.candidate;
 
-import com.kamli.VoteApp.domain.Party.Party;
-import com.kamli.VoteApp.domain.Party.PartyRepository;
+import com.kamli.VoteApp.domain.party.Party;
+import com.kamli.VoteApp.domain.party.PartyRepository;
 import com.kamli.VoteApp.dto.CandidateDTO;
 import com.kamli.VoteApp.dto.CandidatesDTO;
 import com.kamli.VoteApp.dto.PartyDTO;

@@ -1,6 +1,6 @@
-package com.kamli.VoteApp.domain.Party;
+package com.kamli.VoteApp.domain.party;
 
-import com.kamli.VoteApp.domain.Candidate.Candidate;
+import com.kamli.VoteApp.domain.candidate.Candidate;
 import lombok.*;
 
 import javax.persistence.*;
