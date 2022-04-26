@@ -1,8 +1,6 @@
-package com.kamli.VoteApp.domain.user;
+package com.kamli.VoteApp.domain.user.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -10,16 +8,20 @@ import javax.persistence.*;
 @Setter
 @Entity
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString
 @Table(name = "User")
-public class User {
+public class AppUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @Column(unique = true)
-    Long identityNumber;
+    String identityNumber;
     String passwordHash;
     boolean hasVoted = false;
     boolean banned = false;
+    Role role = Role.ALLOWED;
 }

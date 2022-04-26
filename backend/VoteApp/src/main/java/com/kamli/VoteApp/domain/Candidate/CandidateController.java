@@ -4,6 +4,7 @@ import com.kamli.VoteApp.dto.CandidateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class CandidateController {
     }
 
     @GetMapping("/vote/{id}")
+    @Secured("ALLOWED")
     public ResponseEntity vote(@PathVariable Long id) {
         Optional<Candidate> candidate = candidateService.voteOnCandidate(id);
         if (candidate.isPresent()){

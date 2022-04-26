@@ -4,13 +4,15 @@ import com.kamli.VoteApp.domain.configuration.entity.BannedUser;
 import com.kamli.VoteApp.domain.configuration.entity.BannedUsers;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class BannedUsersConfiguration {
+@Configuration
+public class UsersConfiguration {
 
     @Bean(name = "bannedUsers")
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -21,5 +23,4 @@ public class BannedUsersConfiguration {
                 .map(BannedUser::getPesel)
                 .collect(Collectors.toSet());
     }
-
 }
