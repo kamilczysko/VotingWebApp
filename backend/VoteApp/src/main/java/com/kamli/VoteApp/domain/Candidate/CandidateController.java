@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -21,9 +20,9 @@ public class CandidateController {
         return "hello";
     }
 
-    @GetMapping("/vote/{id}")
+    @PostMapping("/vote")
     @Secured("ALLOWED")
-    public ResponseEntity vote(@PathVariable Long id) {
+    public ResponseEntity vote(@RequestBody Long id) {
         Optional<Candidate> candidate = candidateService.voteOnCandidate(id);
         if (candidate.isPresent()){
             return new ResponseEntity<>(HttpStatus.OK);
@@ -32,7 +31,12 @@ public class CandidateController {
     }
 
     @GetMapping("/get-all-candidates")
-    public List<CandidateDTO> getAllCandidates(){
-        return candidateService.getAllCandidates();
+    public String getAllCandidates(){
+        String res = " ";
+        for(CandidateDTO a : candidateService.getAllCandidates()){
+            res += a.getName()+" - "+a.getParty() + " - "+a.getVotes()+"\n";
+        }
+
+        return res;
     }
 }
