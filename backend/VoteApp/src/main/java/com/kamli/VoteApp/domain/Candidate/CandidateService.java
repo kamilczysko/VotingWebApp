@@ -3,7 +3,6 @@ package com.kamli.VoteApp.domain.candidate;
 import com.kamli.VoteApp.domain.party.Party;
 import com.kamli.VoteApp.domain.party.PartyRepository;
 import com.kamli.VoteApp.infrastructue.user.service.JwtUserDetailService;
-import com.kamli.VoteApp.infrastructue.user.entity.AppUser;
 import com.kamli.VoteApp.dto.CandidateDTO;
 import com.kamli.VoteApp.dto.CandidatesDTO;
 import com.kamli.VoteApp.dto.PartyDTO;
@@ -57,41 +56,44 @@ public class CandidateService {
         CandidatesDTO candidates = new RestTemplate()
                 .getForObject("http://webtask.future-processing.com:8069/candidates", CandidatesDTO.class);
         Map<String, Party> nameToParty = saveParties(candidates);
-        saveCandidates(candidates, nameToParty);
+        saveCandidates(candidates, nameToParty); //todo - make it save only one to db
     }
 
-    public Optional<Candidate> voteOnCandidate(Long id) {
+    public synchronized Optional<Candidate> voteOnCandidate(Long id) {
         Optional<Candidate> candidate = candidateRepository.findById(id);
-        ActualUser userAuth = (ActualUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AppUser user = userDetailService.getUser(userAuth.getId());
+        ActualUser user = (ActualUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(user.isBanned()){
             throw new IllegalStateException("User was banned");
         }
-        if(user.isHasVoted()){
+        if(user.isVoted()){
             throw new IllegalStateException("User has voted already");
         }
-        Optional<Candidate> candidateToUpdate = candidate.map(c -> Candidate.builder()
-                .id(c.getId())
-                .name(c.getName())
-                .party(c.getParty())
-                .numberOfVotes(c.getNumberOfVotes() + 1)
-                .build());
+        Optional<Candidate> candidateToUpdate = candidate.map(this::mapToCandidateWithIncreasedNumberOfVotes);
         if(candidateToUpdate.isPresent()) {
             candidateToUpdate.ifPresent(c -> candidateRepository.save(c));
-            userDetailService.userHasVoted(userAuth.getId());
+            userDetailService.userHasVoted(user.getId());//todo use endpoint instead of service
             return candidateToUpdate;
         }
         return Optional.empty();
     }
 
+    private Candidate mapToCandidateWithIncreasedNumberOfVotes(Candidate candidate) {
+        return Candidate.builder()
+                .id(candidate.getId())
+                .name(candidate.getName())
+                .party(candidate.getParty())
+                .numberOfVotes(candidate.getNumberOfVotes() + 1)
+                .build();
+    }
+
     private List<Candidate> saveCandidates(CandidatesDTO candidates, Map<String, Party> nameToParty) {
         List<Candidate> candidatesToSave = candidates.getCandidate().stream()
-                .map(candidate -> mapToCandidate(nameToParty, candidate))
+                .map(candidate -> mapToCandidateWithIncreasedNumberOfVotes(nameToParty, candidate))
                 .collect(Collectors.toList());
         return candidateRepository.saveAll(candidatesToSave);
     }
 
-    private Candidate mapToCandidate(Map<String, Party> nameToParty, CandidateDTO candidate) {
+    private Candidate mapToCandidateWithIncreasedNumberOfVotes(Map<String, Party> nameToParty, CandidateDTO candidate) {
         return Candidate.builder()
                 .name(candidate.getName())
                 .party(nameToParty.get(candidate.getParty()))

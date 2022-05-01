@@ -1,4 +1,4 @@
-package com.kamli.VoteApp.domain.configuration;
+package com.kamli.VoteApp.infrastructue.config;
 
 import com.kamli.VoteApp.infrastructue.user.entity.BannedUser;
 import com.kamli.VoteApp.infrastructue.user.entity.BannedUsers;

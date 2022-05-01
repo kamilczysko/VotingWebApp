@@ -1,7 +1,8 @@
 package com.kamli.VoteApp.infrastructue.user.controller;
 
-import com.kamli.VoteApp.domain.configuration.UsersConfiguration;
+import com.kamli.VoteApp.infrastructue.config.UsersConfiguration;
 import com.kamli.VoteApp.dto.AppUserDTO;
+import com.kamli.VoteApp.dto.UserPermissionsDTO;
 import com.kamli.VoteApp.infrastructue.user.entity.AppUser;
 import com.kamli.VoteApp.infrastructue.user.entity.Role;
 import com.kamli.VoteApp.infrastructue.user.service.JwtUserDetailService;
@@ -12,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,6 +27,12 @@ public class UserController {
 
     @Autowired
     private JwtUserDetailService userService;
+
+    @GetMapping("/can-vote")
+    public ResponseEntity<UserPermissionsDTO> canVote(Long userId){
+        AppUser user = userService.getUser(userId);
+        return ResponseEntity.ok(new UserPermissionsDTO(user.isHasVoted(), user.isBanned()));
+    }
 
     @GetMapping("/disallowed")
     public List<String> getDisallowedUsers() {

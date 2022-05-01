@@ -1,6 +1,6 @@
 package com.kamli.VoteApp.infrastructue.user.service;
 
-import com.kamli.VoteApp.domain.configuration.UsersConfiguration;
+import com.kamli.VoteApp.infrastructue.config.UsersConfiguration;
 import com.kamli.VoteApp.infrastructue.ActualUser;
 import com.kamli.VoteApp.infrastructue.user.entity.AppUser;
 import com.kamli.VoteApp.infrastructue.user.entity.Role;

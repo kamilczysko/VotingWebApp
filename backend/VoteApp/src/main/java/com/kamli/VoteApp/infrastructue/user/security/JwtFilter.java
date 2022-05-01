@@ -7,7 +7,6 @@ import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -23,6 +22,7 @@ import java.util.*;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
+    private final List<String> WHITELIST = Arrays.asList("/rest/register", "/rest/auth");
 
     @Autowired
     private JwtUserDetailService userService;
@@ -31,35 +31,12 @@ public class JwtFilter extends OncePerRequestFilter {
     private JwtTokenUtil tokenUtil;
 
     @Value("${jwt.secret}")
-    private String secret = "abcdef";
-
-    private UserDetails getAuthenticationByToken(String header) {
-
-        final String BEARER = "Bearer ";
-        final String EMPTY_STRING = "";
-
-        Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secret).parseClaimsJws(header.replace(BEARER, EMPTY_STRING));
-        String username = claimsJws.getBody().getSubject();
-
-        UserDetails userDetails = userService.loadUserByUsername(username);
-
-        return userDetails;
-    }
-
-    private String getHeaderFromRequest(HttpServletRequest request) {
-        return request.getHeader("Authorization");
-    }
-
-    private Set<SimpleGrantedAuthority> getAllAuthorities(String role) {
-        return Collections.singleton(new SimpleGrantedAuthority(role));
-    }
-
-    List<String> whiteList = Arrays.asList("/register", "/auth");
+    private String secret;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        if (whiteList.contains(requestURI)) {
+        if (WHITELIST.contains(requestURI)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -72,5 +49,20 @@ public class JwtFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
         }
         filterChain.doFilter(request, response);
+    }
+
+    private String getHeaderFromRequest(HttpServletRequest request) {
+        return request.getHeader("Authorization");
+    }
+
+    private UserDetails getAuthenticationByToken(String header) {
+
+        final String BEARER = "Bearer ";
+        final String EMPTY_STRING = "";
+
+        Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secret).parseClaimsJws(header.replace(BEARER, EMPTY_STRING));
+        String username = claimsJws.getBody().getSubject();
+
+        return userService.loadUserByUsername(username);
     }
 }

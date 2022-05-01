@@ -1,7 +1,5 @@
 package com.kamli.VoteApp.infrastructue.user.security;
 
-import java.io.Serializable;
-
 public class JwtResponse{
     private final String jwttoken;
 
