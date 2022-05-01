@@ -1,7 +1,7 @@
 package com.kamli.VoteApp.domain.configuration;
 
-import com.kamli.VoteApp.domain.configuration.entity.BannedUser;
-import com.kamli.VoteApp.domain.configuration.entity.BannedUsers;
+import com.kamli.VoteApp.infrastructue.user.entity.BannedUser;
+import com.kamli.VoteApp.infrastructue.user.entity.BannedUsers;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

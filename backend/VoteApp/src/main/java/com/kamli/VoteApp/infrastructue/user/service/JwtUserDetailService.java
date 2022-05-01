@@ -1,9 +1,9 @@
-package com.kamli.VoteApp.domain.user;
+package com.kamli.VoteApp.infrastructue.user.service;
 
 import com.kamli.VoteApp.domain.configuration.UsersConfiguration;
-import com.kamli.VoteApp.domain.user.entity.AppUser;
-import com.kamli.VoteApp.domain.user.entity.Role;
 import com.kamli.VoteApp.infrastructue.ActualUser;
+import com.kamli.VoteApp.infrastructue.user.entity.AppUser;
+import com.kamli.VoteApp.infrastructue.user.entity.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class UserDetailService implements UserDetailsService {
+public class JwtUserDetailService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -29,7 +29,6 @@ public class UserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String identityNumber) throws UsernameNotFoundException {
         AppUser appUser = userRepository.findByIdentityNumber(identityNumber);
-        System.out.println("Login user: "+appUser);
         if (appUser == null) {
             throw new IllegalStateException("User does not exists");
         }

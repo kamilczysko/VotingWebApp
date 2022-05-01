@@ -1,9 +1,10 @@
-package com.kamli.VoteApp.domain.user;
+package com.kamli.VoteApp.infrastructue.user.controller;
 
 import com.kamli.VoteApp.domain.configuration.UsersConfiguration;
-import com.kamli.VoteApp.domain.user.entity.AppUser;
-import com.kamli.VoteApp.domain.user.entity.Role;
 import com.kamli.VoteApp.dto.AppUserDTO;
+import com.kamli.VoteApp.infrastructue.user.entity.AppUser;
+import com.kamli.VoteApp.infrastructue.user.entity.Role;
+import com.kamli.VoteApp.infrastructue.user.service.JwtUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -27,7 +28,7 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserDetailService userService;
+    private JwtUserDetailService userService;
 
     @GetMapping("/disallowed")
     public List<String> getDisallowedUsers() {

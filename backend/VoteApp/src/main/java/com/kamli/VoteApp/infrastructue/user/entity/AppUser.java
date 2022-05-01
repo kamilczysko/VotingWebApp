@@ -1,5 +1,6 @@
-package com.kamli.VoteApp.domain.user.entity;
+package com.kamli.VoteApp.infrastructue.user.entity;
 
+import com.kamli.VoteApp.infrastructue.user.entity.Role;
 import lombok.*;
 
 import javax.persistence.*;

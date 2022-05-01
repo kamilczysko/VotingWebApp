@@ -2,8 +2,8 @@ package com.kamli.VoteApp.domain.candidate;
 
 import com.kamli.VoteApp.domain.party.Party;
 import com.kamli.VoteApp.domain.party.PartyRepository;
-import com.kamli.VoteApp.domain.user.UserDetailService;
-import com.kamli.VoteApp.domain.user.entity.AppUser;
+import com.kamli.VoteApp.infrastructue.user.service.JwtUserDetailService;
+import com.kamli.VoteApp.infrastructue.user.entity.AppUser;
 import com.kamli.VoteApp.dto.CandidateDTO;
 import com.kamli.VoteApp.dto.CandidatesDTO;
 import com.kamli.VoteApp.dto.PartyDTO;
@@ -30,7 +30,7 @@ public class CandidateService {
     private CandidateRepository candidateRepository;
 
     @Autowired
-    private UserDetailService userDetailService;
+    private JwtUserDetailService userDetailService;
 
     public List<CandidateDTO> getAllCandidates() {
         return candidateRepository.findAll().stream()
