@@ -16,7 +16,7 @@
             <label>Password</label>
             <input v-model="newPassword" type="password" name="" id="">
             <label>Confirm password</label>
-            <input v-model="newPasswordConfirmation" type="password" name="" id="">
+            <input v-model="newPasswordConfirmation" type="password" v-bind:class="{wrong : passwordConfirmationIsWrong}">
             <button class="userActionButton">Register</button>
         </section>
     </form>
@@ -31,7 +31,16 @@ export default {
         password: "",
         newLogin: "",
         newPassword: "",
-        newPasswordConfirmation: ""
+        newPasswordConfirmation: "",
+        passwordsAreDifferent: false
+        }
+    },
+    methods: {
+        
+    },
+    computed: {
+        passwordConfirmationIsWrong() {
+            return this.newPasswordConfirmation != "" && this.newPasswordConfirmation != this.newPassword
         }
     }
 }
@@ -49,10 +58,11 @@ export default {
         margin-top:5px;
     }
     form {
-        width: 500px;
-        height: 300px;
+        width: 40vw;
+        height: 30vh;
         display: flex;
         flex-direction: row;
+        align-items: flex-end;
         margin: auto;
     }
     section {
@@ -66,12 +76,17 @@ export default {
 
     .separator {
         width: 1px;
-        height: 70%;
         margin: 0px 4px;
-        align-self: flex-end;
-        background: #E7E3E2;
+        background: #B4ACAA;
+        align-self: normal;
     }
     .userActionButton{
         margin-top: 25px;    
     }
+    .wrong {
+        border-color: red;
+    }
+    *:focus {
+    outline: none;
+}
 </style>
