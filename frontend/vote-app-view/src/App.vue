@@ -2,23 +2,19 @@
   <main class="main">
     <nav>
       <h1 class="header">Vote App</h1>
-      <a class="hidden" href="#">Show candidates</a>
-      <a href="#">Logout</a>
-      <a class="hidden" href="#">User panel</a>
+      <router-link to="/user-panel">User panel</router-link>
+      <router-link to="/">Voting panel</router-link>
+      <router-link to="/">Print</router-link>
+      <a class="hidden" href="#">Logout</a>
     </nav>
-    <!-- <UserForm/> -->
-    <CandidatesList/>
+    <router-view></router-view>
   </main>
 </template>
 
 <script>
-// import UserForm from "./components/UserForm.vue"
-import CandidatesList from "./components/CandidatesList.vue"
 export default {
   name: 'App',
   components: {
-    // UserForm,
-    CandidatesList
   }
 }
 </script>
@@ -47,6 +43,11 @@ export default {
     position: relative;
     bottom: 2px;
     left: 2px;
+  }
+  nav a:active {
+    position: relative;
+    top: .1px;
+    font-weight: bolder;
   }
   nav h1 {
     grid-column: 2;

@@ -22,7 +22,7 @@ import java.util.*;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    private final List<String> WHITELIST = Arrays.asList("/rest/register", "/rest/auth");
+    private final List<String> WHITELIST = Arrays.asList("/rest/register", "/rest/auth", "/rest/get-all-candidates");
 
     @Autowired
     private JwtUserDetailService userService;

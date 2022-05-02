@@ -1,10 +1,11 @@
 <template>
     <main>
+        <Message v-bind:message="testMessage" v-bind:type="type" v-if="isMessageVisible" v-on:closePopup="closePopup"/>
         <section>
             <div class="voteList">
                 <h2>Vote:</h2>
                 <ul>
-                    <li v-for="c in candidates" v-bind:key="c.id"><button v-on:click="vote(c.id)">{{c.name}}</button> - {{c.votes}}</li>
+                    <li v-for="c in candidates" v-bind:key="c.id"><button v-on:click="vote(c.id)">{{c.name}}</button> {{c.votes}}</li>
                 </ul>
             </div>
             <Bar :chart-data="getChartData" :chart-options="chartOptions"/>
@@ -15,7 +16,7 @@
 
 <script>
 import { Bar } from 'vue-chartjs'
-
+import Message from "./messages/Message.vue"
 
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
@@ -23,7 +24,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 export default {
     name: "candidate-list",
     components: {
-        Bar
+        Bar, Message
     },
     data: () => {
         return {
@@ -31,7 +32,10 @@ export default {
             chartOptions: {
                 responsive: true,
                 maintainAspectRatio: false
-            }
+            },
+            testMessage: "test message mordo co jest asdfasdfasd asdfasdfasf asfdasf sa ssf sdfadfasd fasdf sadfa sfasdf sasadfsa efasdfj we sprasadfasdfasfasfsadwdz to",
+            type: "error",
+            isMessageVisible: false
         }
     },
     methods:{
@@ -50,8 +54,14 @@ export default {
             return `#${randColor.toUpperCase()}`
          },
          vote(id){
-             console.log("voted on: "+id)
-             this.candidates.filter(candidate => candidate.id === id).map(candidate => candidate.votes = candidate.votes+1)
+             const candidate = this.candidates.filter(candidate => candidate.id === id)
+             candidate.map(candidate => candidate.votes = candidate.votes+1)
+             this.type = "message"
+             this.testMessage = "Voted correctly on "+candidate[0].name
+             this.isMessageVisible = true;
+         },
+         closePopup(){
+             this.isMessageVisible = false;
          }
     },
     computed: {
@@ -80,6 +90,7 @@ export default {
 <style scoped>
     h2 {
         font-size: 1.3rem;
+        text-decoration: underline;
     }
     section {
         margin: auto;
@@ -103,8 +114,20 @@ export default {
     li {
         margin-top: 4px;
         list-style: none;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px;
+        border-color: #B4ACAA;
+        border-bottom-style: solid;
     }
-    .voteList{
-
+    ul{
+        font-size: 1.1rem;
+        padding: 0;
+        width: 10vw;
+    }
+    .hidden {
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s 2s, opacity 2s linear;
     }
 </style>
