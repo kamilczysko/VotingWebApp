@@ -1,15 +1,15 @@
 <template>
-    <section>
-        <form>
+    <form>
+        <section class="login">
             <h1>Login</h1>
             <label>PESEL</label>
             <input v-model="login" type="text" name="" id="">
             <label>Password</label>
             <input v-model="password" type="password" name="" id="">
             <button class="userActionButton">Login</button>
-        </form>
+        </section>
         <div class="separator"></div>
-        <form>
+        <section class="register">
             <h1>Register</h1>
             <label>PESEL</label>
             <input v-model="newLogin" type="text" name="" id="">
@@ -18,8 +18,8 @@
             <label>Confirm password</label>
             <input v-model="newPasswordConfirmation" type="password" name="" id="">
             <button class="userActionButton">Register</button>
-        </form>
-    </section>
+        </section>
+    </form>
 </template>
 
 <script>
@@ -37,43 +37,41 @@ export default {
 }
 </script>
 
-<style>
-    h1{
-        font-size: 1.2em;
-    }
-    label{
+<style scoped>
+    h1 {
+        text-align: center;
+        font-size: 1.4em;
+        justify-self: start;
         align-self: flex-start;
-        margin-left: 4px;
-        margin-top: 8px;
     }
-    .userActionButton{
-        width: fit-content;
-        margin-top: 15px;
+    label {
+        font-size: .9rem;
+        margin-top:5px;
     }
-    input {
-        align-items: flex-start;
-        margin-bottom: 5px;
-        width: 95%;
-        margin-bottom: 5px;
+    form {
+        width: 500px;
+        height: 300px;
+        display: flex;
+        flex-direction: row;
+        margin: auto;
     }
     section {
         display: flex;
-        flex-direction: row;
-        height: fit-content;
-        width: 30vw;
-        margin: auto;
-    }
-    form {
-        display: flex;
         flex-direction: column;
-        align-items: center;
+        justify-content: end;
+        margin: 0px 4px;
         width: 100%;
+        height: 100%;
     }
+
     .separator {
-        height: 15rem;
         width: 1px;
+        height: 70%;
+        margin: 0px 4px;
+        align-self: flex-end;
         background: #E7E3E2;
-        margin: auto;
-        margin: 1px 10px;
+    }
+    .userActionButton{
+        margin-top: 25px;    
     }
 </style>

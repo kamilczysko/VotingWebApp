@@ -1,7 +1,10 @@
 <template>
-  <body>
+  <main class="main">
+    <nav>
+      <h1>Vote App</h1>
+    </nav>
     <UserForm/>
-  </body>
+  </main>
 </template>
 
 <script>
@@ -14,11 +17,13 @@ export default {
 }
 </script>
 
-<style>
-  body {
-    height: 80vh;
-    width: 100vw;
-    display: flex;
-    align-content: center;
+<style scoped>
+  h1 {
+    text-align: center;
   }
+ main {
+   display: flex;
+   height: 80vh;
+   flex-direction: column;
+ }
 </style>
