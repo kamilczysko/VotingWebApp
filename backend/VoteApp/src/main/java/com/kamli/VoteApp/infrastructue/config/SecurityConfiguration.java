@@ -38,9 +38,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/rest/get-all-candidates")
-                .antMatchers("/rest/auth")
-                .antMatchers("/rest/register");
+                .antMatchers("/get-all-candidates")
+                .antMatchers("/auth")
+                .antMatchers("/register");
     }
 
     @Bean

@@ -5,7 +5,7 @@
             <div class="voteList">
                 <h2>Vote:</h2>
                 <ul>
-                    <li v-for="c in candidates" v-bind:key="c.id"><button v-on:click="vote(c.id)">{{c.name}}</button> {{c.votes}}</li>
+                    <li v-for="c in candidates" v-bind:key="c.id"><button v-on:click="vote(c.id)">{{c.name}}({{c.party}})</button> {{c.votes}}</li>
                 </ul>
             </div>
             <Bar :chart-data="getChartData" :chart-options="chartOptions"/>
@@ -17,6 +17,7 @@
 <script>
 import { Bar } from 'vue-chartjs'
 import Message from "./messages/Message.vue"
+import axios from 'axios'
 
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
@@ -55,14 +56,22 @@ export default {
          },
          vote(id){
              const candidate = this.candidates.filter(candidate => candidate.id === id)
-             candidate.map(candidate => candidate.votes = candidate.votes+1)
-             this.type = "message"
-             this.testMessage = "Voted correctly on "+candidate[0].name
-             this.isMessageVisible = true;
+             
+             const options = {"headers" : {"Authorization": "Bearer 1234"}}
+             axios.post("/rest/vote/"+id, options)
+             .then(response => response.data)
+             .then(() => this.setMessage("Voted on "+candidate[0].name, "msg"))
+             .then(() => candidate.map(candidate => candidate.votes = candidate.votes+1))
+             .catch(() => this.setMessage("There is problem with your vote", "error"))
          },
          closePopup(){
              this.isMessageVisible = false;
-         }
+         },
+         setMessage(msg, tp){
+            this.type = tp
+            this.testMessage = msg
+            this.isMessageVisible = true;
+         },
     },
     computed: {
         getTotal() {
@@ -81,8 +90,15 @@ export default {
                     }
                 ]
             }
-        
-        }
+        },
+    },
+    mounted(){
+        axios.get("/rest/get-all-candidates")
+            .then(response => response.data)
+            .then(data => data.sort((a,b)=>(a.party>b.party)?1:-1))
+            .then(data => this.candidates = data)
+            .then(() => this.fetchVotes())
+            .catch(error => console.log(error))
     }
 }
 </script>
