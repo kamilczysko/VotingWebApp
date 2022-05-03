@@ -47,6 +47,7 @@ const store = createStore({
     },
     getters: {
         isLoggedIn(state){
+            console.log(state.token);
             return state.token != 0
         },
         voted(state) {

@@ -5,8 +5,8 @@
       <router-link to="/user-panel">User panel</router-link>
       <router-link to="/">Voting panel</router-link>
       <router-link to="/">Print</router-link>
-      <button v-if="isLoggedIn" v-on:click="logout">Logout</button>
-      <p v-if="isLoggedIn">You're logged in as {{this.$store.state.username}}</p>
+      <button v-if="isLogged" v-on:click="logout">Logout</button>
+      <p v-if="checkLoggedIn">You're logged in as {{this.$store.state.username}}</p>
     </nav>
     <router-view></router-view>
   </main>
@@ -15,6 +15,11 @@
 <script>
 export default {
   name: 'App',
+  data: () => {
+    return {
+      isLoggedIn: false
+    } 
+  },
   components: {
   },
   methods:{
@@ -23,9 +28,14 @@ export default {
     }
   },
   computed: {
-    isLoggedIn(){
+    isLogged(){
+      console.log("is logged in: "+this.$store.getters.isLoggedIn)
       return this.$store.getters.isLoggedIn
     }
+  },
+  mounted() {
+    console.log("actual token: "+this.$store.state.token)
+    console.log("is logged in: "+this.$store.getters.isLoggedIn)
   }
 }
 </script>

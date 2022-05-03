@@ -1,32 +1,39 @@
 <template>
-    <form action="javascript:void(0);">
-        <section class="login">
-            <h1>Login</h1>
-            <label>PESEL</label>
-            <input v-model="name" type="text" name="" id="">
-            <label>Password</label>
-            <input v-model="password" type="password" name="" id="">
-            <button class="userActionButton" v-on:click="performLogin">Login</button>
-        </section>
-        <div class="separator"></div>
-        <section class="register">
-            <h1>Register</h1>
-            <label>PESEL</label>
-            <input v-model="newLogin" type="text" name="" id="">
-            <label>Password</label>
-            <input v-model="newPassword" type="password" name="" id="">
-            <label>Confirm password</label>
-            <input v-model="newPasswordConfirmation" type="password" v-bind:class="{wrong : passwordConfirmationIsWrong}">
-            <button class="userActionButton">Register</button>
-        </section>
-    </form>
+
+    <div>
+        <Message v-bind:message="testMessage" v-bind:type="type" v-if="isMessageVisible" v-on:closePopup="closePopup"/>
+        <form action="javascript:void(0);">
+            <section class="login">
+                <h1>Login</h1>
+                <label>PESEL</label>
+                <input v-model="name" type="text" name="" id="">
+                <label>Password</label>
+                <input v-model="password" type="password" name="" id="">
+                <button class="userActionButton" v-on:click="performLogin">Login</button>
+            </section>
+            <div class="separator"></div>
+            <section class="register">
+                <h1>Register</h1>
+                <label>PESEL</label>
+                <input v-model="newLogin" type="text" name="" id="">
+                <label>Password</label>
+                <input v-model="newPassword" type="password" name="" id="">
+                <label>Confirm password</label>
+                <input v-model="newPasswordConfirmation" type="password" v-bind:class="{wrong : passwordConfirmationIsWrong}">
+                <button class="userActionButton">Register</button>
+            </section>
+        </form>
+    </div>
 </template>
 
 <script>
 import axios from 'axios'
-// import Message from './messages/Message.vue'
+import Message from './messages/Message.vue'
 export default {
     name: "user-form",
+    components: {
+        Message
+    },
     data: () => {
         return {
         name: "",
@@ -34,7 +41,10 @@ export default {
         newLogin: "",
         newPassword: "",
         newPasswordConfirmation: "",
-        passwordsAreDifferent: false
+        passwordsAreDifferent: false,
+        testMessage: "",
+        type: "error",
+        isMessageVisible: false
         }
     },
     methods: {
@@ -42,9 +52,17 @@ export default {
             axios.post('/rest/auth', {username: this.name, password: this.password})
             .then(response => response.data)
             .then(data => this.$store.commit("login", {"username": data.username, "token": data.token, "isBanned": data.banned, "hasVoted": data.hasVoted}))
-            .catch(error => console.log(error))
-        }
-        
+            .then(() => this.setMessage("Logged in sucessfully", "msg"))
+            .catch(() => this.setMessage("Failed to login", "error"))
+        },
+        setMessage(msg, tp){
+            this.type = tp
+            this.testMessage = msg
+            this.isMessageVisible = true;
+         },
+         closePopup(){
+             this.isMessageVisible = false;
+         }
     },
     computed: {
         passwordConfirmationIsWrong() {

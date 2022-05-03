@@ -5,7 +5,10 @@
             <div class="voteList">
                 <h2>Vote:</h2>
                 <ul>
-                    <li v-for="c in candidates" v-bind:key="c.id"><button v-on:click="vote(c.id)">{{c.name}}({{c.party}})</button> {{c.votes}}</li>
+                    <CandidatesFromParty v-for="[party, listOfCandidates] in getPartyToCandidates" v-bind:key="party"
+                        v-bind:partyName="party"
+                        v-bind:candidates="listOfCandidates"
+                        v-on:vote="vote"/>
                 </ul>
             </div>
             <Bar :chart-data="getChartData" :chart-options="chartOptions"/>
@@ -16,7 +19,8 @@
 
 <script>
 import { Bar } from 'vue-chartjs'
-import Message from "./messages/Message.vue"
+import Message from './messages/Message.vue'
+import CandidatesFromParty from './list/CandidatesFromParty.vue'
 import axios from 'axios'
 
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
@@ -25,7 +29,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 export default {
     name: "candidate-list",
     components: {
-        Bar, Message
+        Bar, Message, CandidatesFromParty
     },
     data: () => {
         return {
@@ -34,9 +38,10 @@ export default {
                 responsive: true,
                 maintainAspectRatio: false
             },
-            testMessage: "test message mordo co jest asdfasdfasd asdfasdfasf asfdasf sa ssf sdfadfasd fasdf sadfa sfasdf sasadfsa efasdfj we sprasadfasdfasfasfsadwdz to",
+            testMessage: "",
             type: "error",
-            isMessageVisible: false
+            isMessageVisible: false,
+            isCollapsed: false
         }
     },
     methods:{
@@ -55,7 +60,11 @@ export default {
             return `#${randColor.toUpperCase()}`
          },
          vote(id){
-             console.log(id)
+             console.log("vote: "+id)
+             if(!this.$store.getters.isLoggedIn){
+                this.setMessage("You need to login first", "error")
+                return;
+             }
              if(this.$store.getters.voted){
                  this.setMessage("You have voted already!", "error")
                  return;
@@ -64,7 +73,6 @@ export default {
                  this.setMessage("You are banned from voting!", "error")
                  return;
              }
-             
              const candidate = this.candidates.filter(candidate => candidate.id === id)
              const options = {"headers" : {"Authorization": "Bearer "+this.$store.state.token}}
              axios.post("/rest/vote/"+id,{}, options)
@@ -83,6 +91,9 @@ export default {
             this.setMessage("Voted on "+candidate.name, "msg")
             this.$store.commit("voted")
             candidate.votes = candidate.votes+1
+         },
+         expand(){
+             this.isCollapsed = !this.isCollapsed
          }
     },
     computed: {
@@ -103,13 +114,24 @@ export default {
                 ]
             }
         },
+        getPartyToCandidates(){
+            const partyToCandidates = new Map();
+            this.candidates.forEach(c =>{
+                let party = c.party;
+                if(partyToCandidates.has(party)) {
+                    partyToCandidates.get(party).push(c)
+                } else {
+                    partyToCandidates.set(party, [c])
+                }
+            })
+            return partyToCandidates;
+         }
     },
     mounted(){
         axios.get("/rest/get-all-candidates")
             .then(response => response.data)
             .then(data => data.sort((a,b)=>(a.party>b.party)?1:-1))
             .then(data => this.candidates = data)
-            .then(() => this.fetchVotes())
             .catch(error => console.log(error))
     }
 }
@@ -122,7 +144,7 @@ export default {
     }
     section {
         margin: auto;
-        width: 65vw;
+        width: 75vw;
         display: flex;
         flex-direction: row;
         justify-content: space-evenly;
@@ -139,19 +161,10 @@ export default {
         position: relative;
         top: 1px;
     }
-    li {
-        margin-top: 4px;
-        list-style: none;
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 1px;
-        border-color: #B4ACAA;
-        border-bottom-style: solid;
-    }
     ul{
         font-size: 1.1rem;
         padding: 0;
-        width: 10vw;
+        width: 25vw;
     }
     .hidden {
         visibility: hidden;
