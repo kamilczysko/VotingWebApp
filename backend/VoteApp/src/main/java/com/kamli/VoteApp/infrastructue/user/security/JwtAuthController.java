@@ -27,7 +27,7 @@ public class JwtAuthController {
         auth(jwtRequest.getUsername(), jwtRequest.getPassword());
         ActualUser userDetails = (ActualUser) userDetailService.loadUserByUsername(jwtRequest.getUsername());
         String token = tokenUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(new JwtResponse(token, userDetails));
     }
 
     private void auth(String login, String password) throws Exception {
