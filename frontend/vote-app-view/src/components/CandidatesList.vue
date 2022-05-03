@@ -55,14 +55,21 @@ export default {
             return `#${randColor.toUpperCase()}`
          },
          vote(id){
-             const candidate = this.candidates.filter(candidate => candidate.id === id)
+             console.log(id)
+             if(this.$store.getters.voted){
+                 this.setMessage("You have voted already!", "error")
+                 return;
+             }
+             if(this.$store.getters.banned){
+                 this.setMessage("You are banned from voting!", "error")
+                 return;
+             }
              
-             const options = {"headers" : {"Authorization": "Bearer 1234"}}
-             axios.post("/rest/vote/"+id, options)
-             .then(response => response.data)
-             .then(() => this.setMessage("Voted on "+candidate[0].name, "msg"))
-             .then(() => candidate.map(candidate => candidate.votes = candidate.votes+1))
-             .catch(() => this.setMessage("There is problem with your vote", "error"))
+             const candidate = this.candidates.filter(candidate => candidate.id === id)
+             const options = {"headers" : {"Authorization": "Bearer "+this.$store.state.token}}
+             axios.post("/rest/vote/"+id,{}, options)
+             .then(() => this.voteOnCandidate(candidate[0]))
+             .catch((error) => this.setMessage("There is problem with your vote: "+error, "error"))
          },
          closePopup(){
              this.isMessageVisible = false;
@@ -72,6 +79,11 @@ export default {
             this.testMessage = msg
             this.isMessageVisible = true;
          },
+         voteOnCandidate(candidate){
+            this.setMessage("Voted on "+candidate.name, "msg")
+            this.$store.commit("voted")
+            candidate.votes = candidate.votes+1
+         }
     },
     computed: {
         getTotal() {

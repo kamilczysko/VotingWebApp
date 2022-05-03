@@ -1,12 +1,12 @@
 <template>
-    <form>
+    <form action="javascript:void(0);">
         <section class="login">
             <h1>Login</h1>
             <label>PESEL</label>
-            <input v-model="login" type="text" name="" id="">
+            <input v-model="name" type="text" name="" id="">
             <label>Password</label>
             <input v-model="password" type="password" name="" id="">
-            <button class="userActionButton">Login</button>
+            <button class="userActionButton" v-on:click="performLogin">Login</button>
         </section>
         <div class="separator"></div>
         <section class="register">
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+// import Message from './messages/Message.vue'
 export default {
     name: "user-form",
     data: () => {
@@ -36,6 +38,12 @@ export default {
         }
     },
     methods: {
+        performLogin() {
+            axios.post('/rest/auth', {username: this.name, password: this.password})
+            .then(response => response.data)
+            .then(data => this.$store.commit("login", {"username": data.username, "token": data.token, "isBanned": data.banned, "hasVoted": data.hasVoted}))
+            .catch(error => console.log(error))
+        }
         
     },
     computed: {

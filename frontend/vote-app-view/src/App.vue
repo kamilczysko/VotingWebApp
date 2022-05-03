@@ -5,7 +5,8 @@
       <router-link to="/user-panel">User panel</router-link>
       <router-link to="/">Voting panel</router-link>
       <router-link to="/">Print</router-link>
-      <a class="hidden" href="#">Logout</a>
+      <button v-if="isLoggedIn" v-on:click="logout">Logout</button>
+      <p v-if="isLoggedIn">You're logged in as {{this.$store.state.username}}</p>
     </nav>
     <router-view></router-view>
   </main>
@@ -15,6 +16,16 @@
 export default {
   name: 'App',
   components: {
+  },
+  methods:{
+    logout(){
+      this.$store.commit("clear");
+    }
+  },
+  computed: {
+    isLoggedIn(){
+      return this.$store.getters.isLoggedIn
+    }
   }
 }
 </script>

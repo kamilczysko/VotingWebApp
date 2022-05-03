@@ -1,7 +1,6 @@
 <template>
   <div class="message" v-bind:class="{error: isError}">
       <button class="close" v-on:click="closePopup">X</button>
-      <h1 v-bind:class="{hidden : !isError}">ERROR!</h1>
       <p>
           {{getMessage}}
       </p>
