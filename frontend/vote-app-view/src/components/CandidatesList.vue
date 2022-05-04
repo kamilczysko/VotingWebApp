@@ -11,7 +11,10 @@
                         v-on:vote="vote"/>
                 </ul>
             </div>
-            <Bar :chart-data="getChartData" :chart-options="chartOptions"/>
+            <div>
+                <Bar :chart-data="getChartData" :chart-options="chartOptions"/>
+                <Bar :chart-data="getPartyChartData" :chart-options="chartOptions"/>
+            </div>
         </section>
         <p>Total votes: {{getTotal}}</p>
     </main>
@@ -33,7 +36,7 @@ export default {
     },
     data: () => {
         return {
-            candidates: [{"id": 1, "name": "adam", "votes": 1},{"id": 2, "name": "pszemek", "votes": 5}, {"id": 3, "name": "franciszek", "votes": 19}],
+            candidates: [],
             chartOptions: {
                 responsive: true,
                 maintainAspectRatio: false
@@ -60,7 +63,6 @@ export default {
             return `#${randColor.toUpperCase()}`
          },
          vote(id){
-             console.log("vote: "+id)
              if(!this.$store.getters.isLoggedIn){
                 this.setMessage("You need to login first", "error")
                 return;
@@ -94,27 +96,8 @@ export default {
          },
          expand(){
              this.isCollapsed = !this.isCollapsed
-         }
-    },
-    computed: {
-        getTotal() {
-            return this.candidates.map(a=>a.votes).reduce((a,b) => a+b);
-        },
-        getChartData() {
-            const names = this.candidates.map(candidate => candidate.name)
-            const votes = this.candidates.map(candidate => candidate.votes)
-            return {
-                labels: names,
-                datasets: [
-                    {
-                    label: "Votes",
-                    backgroundColor: this.generateRandomColor(),
-                    data: votes
-                    }
-                ]
-            }
-        },
-        getPartyToCandidates(){
+         },
+         getPartyToCandidatesMap() {
             const partyToCandidates = new Map();
             this.candidates.forEach(c =>{
                 let party = c.party;
@@ -125,6 +108,45 @@ export default {
                 }
             })
             return partyToCandidates;
+         }
+    },
+    computed: {
+        getTotal() {
+            if(this.candidates.length == 0){
+                return 0
+            }
+            return this.candidates.map(a=>a.votes).reduce((a,b) => a+b);
+        },
+        getChartData() {
+            const names = this.candidates.map(candidate => candidate.name)
+            const votes = this.candidates.map(candidate => candidate.votes)
+            return {
+                labels: names,
+                datasets: [
+                    {
+                    label: "Candidates votes",
+                    backgroundColor: this.generateRandomColor(),
+                    data: votes
+                    }
+                ]
+            }
+        },
+        getPartyToCandidates() {
+            return this.getPartyToCandidatesMap()
+         },
+         getPartyChartData(){
+             let parties = this.getPartyToCandidatesMap()
+             const votes = Array.from(parties.values()).map(a=>a.map(c=>c.votes).reduce((a,b)=>a+b))
+             return {
+                labels: Array.from(parties.keys()),
+                datasets: [
+                    {
+                    label: "Parties votes",
+                    backgroundColor: this.generateRandomColor(),
+                    data: votes
+                    }
+                ]
+            }
          }
     },
     mounted(){

@@ -1,6 +1,6 @@
 <template>
         <li class="party">
-           <button v-on:click="expand"> {{partyName}} </button>
+           <button v-on:click="expand"> {{partyName}}</button>
             <ul v-if="isCollapsed">
                 <li v-for="c in candidates" v-bind:key="c.id"><button v-on:click="vote(c.id)">{{c.name}}</button></li>
             </ul>
@@ -54,6 +54,6 @@ export default {
     ul{
         font-size: 1.1rem;
         padding: 0;
-        width: 15vw;
+        width: 25vw;
     }
 </style>

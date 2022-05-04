@@ -2,13 +2,23 @@
   <main class="main">
     <nav>
       <h1 class="header">Vote App</h1>
-      <router-link to="/user-panel">User panel</router-link>
-      <router-link to="/">Voting panel</router-link>
-      <router-link to="/">Print</router-link>
-      <button v-if="isLogged" v-on:click="logout">Logout</button>
-      <p v-if="checkLoggedIn">You're logged in as {{this.$store.state.username}}</p>
+      <button v-on:click="toggleMenu">menu</button>
+      <ul class="menu" v-if="isMenuVisible">
+        <li><router-link to="/user-panel">User panel</router-link></li>
+        <li><router-link to="/">Voting panel</router-link></li>
+        <li><router-link to="/">Print</router-link></li>
+        <li></li>
+      </ul>
+      <div>
+        <p v-if="checkLoggedIn">You're logged in as {{this.$store.state.username}}</p>  
+        <button v-if="isLogged" v-on:click="logout">Logout</button>
+      </div>
+      
     </nav>
-    <router-view></router-view>
+    <section>
+      <router-view></router-view>
+    </section>
+    
   </main>
 </template>
 
@@ -17,7 +27,8 @@ export default {
   name: 'App',
   data: () => {
     return {
-      isLoggedIn: false
+      isLoggedIn: false,
+      isMenuVisible: false
     } 
   },
   components: {
@@ -25,22 +36,26 @@ export default {
   methods:{
     logout(){
       this.$store.commit("clear");
+    },
+    toggleMenu(){
+      this.isMenuVisible = !this.isMenuVisible
     }
   },
   computed: {
     isLogged(){
-      console.log("is logged in: "+this.$store.getters.isLoggedIn)
       return this.$store.getters.isLoggedIn
     }
-  },
-  mounted() {
-    console.log("actual token: "+this.$store.state.token)
-    console.log("is logged in: "+this.$store.getters.isLoggedIn)
   }
 }
 </script>
 
 <style scoped>
+  .menu {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+  }
   button {
     border:none;
     background: none;
@@ -58,8 +73,9 @@ export default {
     align-self: center;
     text-decoration: none;
     color: black;
+    height: 10vh;
   }
-    nav a:hover {
+  nav a:hover {
     font-weight: bolder;
     position: relative;
     bottom: 2px;
@@ -78,13 +94,19 @@ export default {
   }
  main {
    display: flex;
-   height: 80vh;
+   height: 70vh;
    flex-direction: column;
-   justify-content: center;
+   /* justify-content: center; */
    align-items: center;
  }
  .hidden {
    display: none;
  }
-
+  section {
+    display: flex;
+    width:100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+  }
 </style>
