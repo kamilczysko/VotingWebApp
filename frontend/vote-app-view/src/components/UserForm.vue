@@ -72,6 +72,12 @@ export default {
          },
          registerAction() {
             if (this.newPasswordConfirmation != "" && this.newPasswordConfirmation == this.newPassword) {
+                const validation = this.validateUserLogin();
+                console.log(validation)
+                if(!validation == "") {
+                    this.setMessage(validation, "error");
+                    return;
+                }
                 axios.post('rest/register', {
                     identityNumber: this.newLogin,
                     password: this.newPassword
@@ -84,6 +90,16 @@ export default {
                 })
                 .catch(() => this.setMessage("Failed to register", "error"));
             }
+         },
+         validateUserLogin() {
+             const reg = new RegExp('^([0-9]{11})$');
+             if(!reg.test(this.newLogin)) {
+                 return "Proper id number consist of 11 numbers";
+             }
+             if (this.newLogin[0] == '0') {
+                 return "You probably ain't alive";
+             }
+             return "";
          }
     },
     computed: {
