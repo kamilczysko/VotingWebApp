@@ -71,7 +71,7 @@
         <button v-if="isLogged" v-on:click="logout">Logout</button>
       </div>
     </nav>
-    <section>
+    <section id="content">
       <router-view></router-view>
     </section>
   </main>
@@ -86,7 +86,9 @@ export default {
       isLoggedIn: false,
       isMenuVisible: false,
       type: "error",
-      isMessageVisible: false
+      isMessageVisible: false,
+      stylesHtml: "",
+      prtHtml: ""
     };
   },
   components: {
@@ -100,7 +102,35 @@ export default {
       this.isMenuVisible = !this.isMenuVisible;
     },
     print() {
-      this.setMessage("Not implemented yet!", "error");
+
+      const prtHtml = document.getElementById('content').innerHTML;
+
+      // Get all stylesheets HTML
+      let stylesHtml = '';
+      for (const node of [...document.querySelectorAll('link[rel="stylesheet"], style')]) {
+        stylesHtml += node.outerHTML;
+      }
+
+      const WinPrint = window.open(
+        "",
+        "",
+        "left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0"
+      );
+
+      WinPrint.document.write(`<!DOCTYPE html>
+        <html>
+          <head>
+            ${stylesHtml}
+          </head>
+          <body>
+            ${prtHtml}
+          </body>
+        </html>`);
+
+      WinPrint.document.close();
+      WinPrint.focus();
+      WinPrint.print();
+      WinPrint.close();
     },
     closePopup() {
       this.isMessageVisible = false;
@@ -115,15 +145,15 @@ export default {
     isLogged() {
       return this.$store.getters.isLoggedIn;
     },
-    isListActive(){
-      return this.$route.name === "vote-list"
+    isListActive() {
+      return this.$route.name === "vote-list";
     }
   }
 };
 </script>
 
 <style scoped>
-.login-info__text{
+.login-info__text {
   text-align: center;
 }
 .login-info {
