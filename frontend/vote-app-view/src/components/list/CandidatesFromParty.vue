@@ -13,7 +13,7 @@ export default {
     props: ["partyName", "candidates"],
     data: ()=>{
         return {
-            isCollapsed: false
+            isCollapsed: true
         }
     },
     methods: {
@@ -46,6 +46,8 @@ export default {
         border-bottom: 1px;
         border-color: #B4ACAA;
         border-bottom-style: solid;
+        margin-left: 10px;
+        margin-top: 10px;
         
     }
     li:last-of-type {
@@ -57,6 +59,6 @@ export default {
     ul{
         font-size: 1.1rem;
         padding: 0;
-        width: 25vw;
+        width: 15vw;
     }
 </style>

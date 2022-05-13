@@ -4,7 +4,7 @@
         <section>
             <div class="voteList">
                 <h2>Vote:</h2>
-                <ul>
+                <ul class="party">
                     <CandidatesFromParty v-for="[party, listOfCandidates] in getPartyToCandidates" v-bind:key="party"
                         v-bind:partyName="party"
                         v-bind:candidates="listOfCandidates"
@@ -160,6 +160,12 @@ export default {
 </script>
 
 <style scoped>
+    .party {
+        width:100%;   
+    }
+    .voteList{
+        align-self: baseline;
+    }
     h2 {
         font-size: 1.3rem;
         text-decoration: underline;

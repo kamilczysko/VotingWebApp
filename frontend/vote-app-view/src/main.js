@@ -11,7 +11,7 @@ require('@/assets/css/style.css')
 
 const routes = [
   { path: '/user-panel', component: UserForm },
-  { path: '/', component: CandidatesList },
+  { path: '/', component: CandidatesList, name: "vote-list" },
 ]
 
 const router = createRouter({
