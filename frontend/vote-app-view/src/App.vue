@@ -1,9 +1,10 @@
 <template>
   <main class="main">
+    <Message v-bind:message="testMessage" v-bind:type="type" v-if="isMessageVisible" v-on:closePopup="closePopup"/>
     <nav>
       <h1 class="header">Vote App</h1>
       <div class="menu">
-        <router-link to="/user-panel" class="menu-item" >
+        <router-link to="/user-panel" class="menu-item" v-if="!isLogged">
             <svg
               width="24"
               height="24"
@@ -39,7 +40,7 @@
                         fill="currentColor"
                       />
                     </svg> </router-link>
-        <router-link to="/" class="menu-item">
+        <a v-on:click="print" class="menu-item">
                   <svg
                     width="24"
                     height="24"
@@ -54,7 +55,7 @@
                       fill="currentColor"
                     />
                   </svg>
-        </router-link>
+        </a>
           
       </div>
       <div class="login-info">
@@ -71,15 +72,19 @@
 </template>
 
 <script>
+import Message from './components/messages/Message.vue'
 export default {
   name: 'App',
   data: () => {
     return {
       isLoggedIn: false,
-      isMenuVisible: false
+      isMenuVisible: false,
+      type: "error",
+      isMessageVisible: false,
     } 
   },
   components: {
+    Message
   },
   methods:{
     logout(){
@@ -87,6 +92,17 @@ export default {
     },
     toggleMenu(){
       this.isMenuVisible = !this.isMenuVisible
+    },
+    print() {
+      this.setMessage("Not implemented yet!", "error");
+    },
+    closePopup(){
+             this.isMessageVisible = false;
+         },
+    setMessage(msg, tp){
+            this.type = tp
+            this.testMessage = msg
+            this.isMessageVisible = true;
     }
   },
   computed: {

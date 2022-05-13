@@ -57,6 +57,9 @@ export default {
                 this.name = "";
                 this.password = "";
             })
+            .then(() => {
+                this.$router.push('/') 
+            })
             .catch(() => this.setMessage("Failed to login", "error"))
         },
         setMessage(msg, tp){
