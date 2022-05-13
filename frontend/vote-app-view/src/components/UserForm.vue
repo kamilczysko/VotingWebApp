@@ -53,6 +53,10 @@ export default {
             .then(response => response.data)
             .then(data => this.$store.commit("login", {"username": data.username, "token": data.token, "isBanned": data.banned, "hasVoted": data.hasVoted}))
             .then(() => this.setMessage("Logged in sucessfully", "msg"))
+            .then(() => {
+                this.name = "";
+                this.password = "";
+            })
             .catch(() => this.setMessage("Failed to login", "error"))
         },
         setMessage(msg, tp){
@@ -69,7 +73,12 @@ export default {
                     identityNumber: this.newLogin,
                     password: this.newPassword
                 })
-                .then(() => this.setMessage("Regiser success", "msg"))
+                .then(() => {
+                    this.setMessage("Regiser success", "msg");
+                    this.newLogin = "";
+                    this.newPassword = "";
+                    this.newPasswordConfirmation = "";
+                })
                 .catch(() => this.setMessage("Failed to register", "error"));
             }
          }
