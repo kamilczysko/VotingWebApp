@@ -80,6 +80,7 @@ export default {
              axios.post("/rest/vote/"+id,{}, options)
              .then(() => this.voteOnCandidate(candidate[0]))
              .catch((error) => this.setMessage("There is problem with your vote: "+error, "error"))
+             this.$emit("candidatesUpdate", this.candidates)
          },
          closePopup(){
              this.isMessageVisible = false;
@@ -154,6 +155,7 @@ export default {
             .then(response => response.data)
             .then(data => data.sort((a,b)=>(a.party>b.party)?1:-1))
             .then(data => this.candidates = data)
+            .then(() => this.$emit("candidatesUpdate", this.candidates))
             .catch(error => console.log(error))
     }
 }

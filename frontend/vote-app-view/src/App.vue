@@ -71,9 +71,23 @@
         <button v-if="isLogged" v-on:click="logout">Logout</button>
       </div>
     </nav>
-    <section id="content">
-      <router-view></router-view>
+    <section>
+      <router-view v-on:candidatesUpdate="candidatesUpdate"></router-view>
     </section>
+    <div class="printMe" id="printMe">
+      <div class="print-container">
+        <h2>Votes by parties</h2>
+        <ul class="print-container">
+          <li v-for="ptv in partyToVotes" v-bind:key="ptv.name">{{ptv.name}} - {{ptv.votes}}</li>
+        </ul>
+      </div>
+      <div class="print-container">
+        <h2>Votes by candidates</h2>
+        <ul class="print-container">
+          <li v-for="c in candidates" v-bind:key="c.name">{{c.name}} ({{c.party}}) - {{c.votes}}</li>
+        </ul>
+      </div>
+    </div>
   </main>
 </template>
 
@@ -88,13 +102,36 @@ export default {
       type: "error",
       isMessageVisible: false,
       stylesHtml: "",
-      prtHtml: ""
+      prtHtml: "",
+      candidates: [],
+      partyToVotes: []
     };
   },
   components: {
     Message
   },
   methods: {
+    getPartyToCandidatesMap() {
+      const partyToCandidates = new Map();
+      this.candidates.forEach(c => {
+        let party = c.party;
+        if (partyToCandidates.has(party)) {
+          partyToCandidates.get(party).push(c);
+        } else {
+          partyToCandidates.set(party, [c]);
+        }
+      });
+      return partyToCandidates;
+    },
+    candidatesUpdate(candidatesList) {
+      this.candidates = candidatesList;
+      let parties = this.getPartyToCandidatesMap()
+      const partyMap = []
+      parties.forEach((values, key) => { 
+        partyMap.push({name: key, votes: values.map(a => a.votes).reduce((a,b)=>a+b)})
+      })
+      this.partyToVotes = partyMap;
+    },
     logout() {
       this.$store.commit("clear");
     },
@@ -102,15 +139,13 @@ export default {
       this.isMenuVisible = !this.isMenuVisible;
     },
     print() {
-
-      const prtHtml = document.getElementById('content').innerHTML;
-
-      // Get all stylesheets HTML
-      let stylesHtml = '';
-      for (const node of [...document.querySelectorAll('link[rel="stylesheet"], style')]) {
+      const prtHtml = document.getElementById("printMe").innerHTML;
+      let stylesHtml = "";
+      for (const node of [
+        ...document.querySelectorAll('link[rel="stylesheet"], style')
+      ]) {
         stylesHtml += node.outerHTML;
       }
-
       const WinPrint = window.open(
         "",
         "",
@@ -153,6 +188,14 @@ export default {
 </script>
 
 <style scoped>
+.printMe {
+  display: none;
+  position: absolute;
+  width: 80vh;
+}
+.print-container {
+  width: 80vh;
+}
 .login-info__text {
   text-align: center;
 }
