@@ -22,7 +22,7 @@ import java.util.Set;
 public class JwtUserDetailService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     ApplicationContext context = new AnnotationConfigApplicationContext(UsersConfiguration.class);
 
@@ -45,12 +45,21 @@ public class JwtUserDetailService implements UserDetailsService {
     }
 
     public void registerNewUser(AppUser newUser) {
-        System.out.println("Register new user: "+newUser);
+        validateIDNumber(newUser);
         Set<String> bannedUsers = context.getBean("bannedUsers", HashSet.class);
         if (bannedUsers.contains(newUser.getIdentityNumber())) {
             userRepository.save(mapDisallowedUser(newUser));
         } else {
             userRepository.save(newUser);
+        }
+    }
+
+    private void validateIDNumber(AppUser newUser) {
+        if (!newUser.getIdentityNumber().matches("([0-9]{11})")) {
+            throw new IllegalStateException("ID number is incorrect. Number should contains exactly 11 numbers");
+        }
+        if (newUser.getIdentityNumber().charAt(0) == '0') {
+            throw new IllegalStateException("User is already dead probably.");
         }
     }
 

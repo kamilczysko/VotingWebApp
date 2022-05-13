@@ -2,7 +2,7 @@
         <li class="party">
            <button v-on:click="expand"> {{partyName}}</button>
             <ul v-if="isCollapsed">
-                <li v-for="c in candidates" v-bind:key="c.id"><button v-on:click="vote(c.id)">{{c.name}}</button></li>
+                <li v-for="c in candidates" v-bind:key="c.id"><button class="vote-button" v-on:click="vote(c.id)">{{c.name}}</button></li>
             </ul>
         </li>
 </template>
@@ -37,6 +37,9 @@ export default {
         font-weight: bolder;
         position: relative;
         top: 1px;
+    }
+    button:hover::after {
+        content: "  X"
     }
     li {
         margin-top: 4px;
