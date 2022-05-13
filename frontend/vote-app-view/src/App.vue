@@ -2,17 +2,16 @@
   <main class="main">
     <nav>
       <h1 class="header">Vote App</h1>
-      <button v-on:click="toggleMenu">menu</button>
-      <ul class="menu" v-if="isMenuVisible">
-        <li><router-link to="/user-panel">User panel</router-link></li>
-        <li><router-link to="/">Voting panel</router-link></li>
-        <li><router-link to="/">Print</router-link></li>
-        <li></li>
-      </ul>
-      <div>
-        <p v-if="checkLoggedIn">You're logged in as {{this.$store.state.username}}</p>  
-        <button v-if="isLogged" v-on:click="logout">Logout</button>
+      <div class="menu">
+        <router-link to="/user-panel" class="menu-item">User panel</router-link>
+        <router-link to="/" class="menu-item">Voting panel</router-link>
+        <router-link to="/" class="menu-item">Print</router-link>
+          
       </div>
+      <div class="login-info">
+            <p v-if="isLogged">You're logged in as <b>{{this.$store.state.username}}</b></p>  
+            <button v-if="isLogged" v-on:click="logout">Logout</button>
+        </div>
       
     </nav>
     <section>
@@ -50,11 +49,20 @@ export default {
 </script>
 
 <style scoped>
+  .login-info {
+    display: flex;
+    margin-left: 50px;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+  }
+  .menu-item {
+    height: fit-content;
+  }
   .menu {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-
+    display: flex;
+    justify-content: space-evenly;
+    width:100%;
   }
   button {
     border:none;

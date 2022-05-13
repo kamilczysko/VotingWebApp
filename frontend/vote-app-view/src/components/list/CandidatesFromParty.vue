@@ -38,7 +38,7 @@ export default {
         position: relative;
         top: 1px;
     }
-    li{
+    li {
         margin-top: 4px;
         list-style: none;
         display: flex;
@@ -47,6 +47,9 @@ export default {
         border-color: #B4ACAA;
         border-bottom-style: solid;
         
+    }
+    li:last-of-type {
+        border-bottom: none;
     }
     .party {
         width: 400px;

@@ -20,7 +20,7 @@
                 <input v-model="newPassword" type="password" name="" id="">
                 <label>Confirm password</label>
                 <input v-model="newPasswordConfirmation" type="password" v-bind:class="{wrong : passwordConfirmationIsWrong}">
-                <button class="userActionButton">Register</button>
+                <button class="userActionButton" v-on:click="registerAction">Register</button>
             </section>
         </form>
     </div>
@@ -62,6 +62,16 @@ export default {
          },
          closePopup(){
              this.isMessageVisible = false;
+         },
+         registerAction() {
+            if (this.newPasswordConfirmation != "" && this.newPasswordConfirmation == this.newPassword) {
+                axios.post('rest/register', {
+                    identityNumber: this.newLogin,
+                    password: this.newPassword
+                })
+                .then(() => this.setMessage("Regiser success", "msg"))
+                .catch(() => this.setMessage("Failed to register", "error"));
+            }
          }
     },
     computed: {
